@@ -10,7 +10,9 @@ n = len(word_urls)
 translit_dicts = []
 for ix, url in enumerate(word_urls):
     print('{} / {}'.format(ix+1, n), url)
-    translit_dicts.append(h.fetch_transliteration(url))
+    result = h.fetch_transliteration(url)
+    print(result)
+    translit_dicts.append(result)
 
 yiddish_words = [d['yiddish'] for d in translit_dicts]
 translit_words = [d['transliteration'] for d in translit_dicts]
