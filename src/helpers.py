@@ -29,8 +29,36 @@ def fetch_links_to_words(list_page_url):
 
 def fetch_transliteration(word_page_url):
     tree = tree_from_url(word_page_url)
-    heb_css_tag = 'div.mw-parser-output > p > strong.headword'
-    translit_css_tag = 'div.mw-parser-output > p > span.headword-tr'
-    heb_word = tree.cssselect(heb_css_tag)[0].text
-    transliteration = tree.cssselect(translit_css_tag)[0].text
-    return {'yiddish': heb_word, 'transliteration': transliteration}
+
+    #print(yi_in_title)
+
+    # grab div in which words live
+    #div_elems = [e for e in tree.cssselect('div.mw-parser-output')[0] if isinstance(e, html.HtmlElement)]
+
+    # find yiddish index
+    #text_contents = [e.text_content() for e in div_elems]
+    #yi_ix = text_contents.index('Yiddish[edit]')
+
+    # filter out everything before yiddish
+    #filtered_div_elems = div_elems[yi_ix:]
+
+    # find <p> after Yiddish header
+    #p_elem = [e for e in filtered_div_elems if e.tag == 'p' and is_valid_yiddish(e.getchildren()[0])][0]
+    #yi_word = [e.text_content() for e in p_elem.cssselect('strong') if is_valid_yiddish(e)][0]
+    #transliteration = [e.text_content() for e in p_elem.cssselect('span') if is_valid_transliteration(e)][0]
+
+    yi_word = [e.text_content() for e in tree.cssselect('strong.headword') if is_valid_yiddish(e)][0]
+    transliteration = [e.text_content() for e in tree.cssselect('span.headword-tr') if is_valid_transliteration(e)][0]
+    return {'yiddish': yi_word, 'transliteration': transliteration}
+
+def is_valid_yiddish(elem):
+    if 'lang' not in elem.attrib:
+        return False
+    else:
+        return elem.attrib['lang'] == 'yi'
+
+def is_valid_transliteration(elem):
+    if 'lang' not in elem.attrib:
+        return False
+    else:
+        return elem.attrib['lang'] == 'yi-Latn'
