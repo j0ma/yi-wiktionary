@@ -1,6 +1,18 @@
 import lxml.html as html
 import cssselect
 import requests
+import string
+
+ASCII_SET = set(string.ascii_letters)
+
+def is_char_ascii(char):
+    if char == '-':
+        return True
+    else:
+        return char in ASCII_SET
+
+def is_word_ascii(word):
+    return all([is_char_ascii(c) for c in word])
 
 def tree_from_url(url):
     page = requests.get(url).content
