@@ -2,6 +2,7 @@ import lxml.html as html
 import cssselect
 import requests
 import string
+import pylev3
 
 ASCII_SET = set(string.ascii_letters)
 
@@ -13,6 +14,10 @@ def is_char_ascii(char):
 
 def is_word_ascii(word):
     return all([is_char_ascii(c) for c in word])
+
+def levenshtein_distance(s1, s2):
+    return (pylev3.Levenshtein
+                  .classic(s1, s2))
 
 def tree_from_url(url):
     page = requests.get(url).content
@@ -29,24 +34,6 @@ def fetch_links_to_words(list_page_url):
 
 def fetch_transliteration(word_page_url):
     tree = tree_from_url(word_page_url)
-
-    #print(yi_in_title)
-
-    # grab div in which words live
-    #div_elems = [e for e in tree.cssselect('div.mw-parser-output')[0] if isinstance(e, html.HtmlElement)]
-
-    # find yiddish index
-    #text_contents = [e.text_content() for e in div_elems]
-    #yi_ix = text_contents.index('Yiddish[edit]')
-
-    # filter out everything before yiddish
-    #filtered_div_elems = div_elems[yi_ix:]
-
-    # find <p> after Yiddish header
-    #p_elem = [e for e in filtered_div_elems if e.tag == 'p' and is_valid_yiddish(e.getchildren()[0])][0]
-    #yi_word = [e.text_content() for e in p_elem.cssselect('strong') if is_valid_yiddish(e)][0]
-    #transliteration = [e.text_content() for e in p_elem.cssselect('span') if is_valid_transliteration(e)][0]
-
     yi_word = [e.text_content() for e in tree.cssselect('strong.headword') if is_valid_yiddish(e)][0]
     transliteration = [e.text_content() for e in tree.cssselect('span.headword-tr') if is_valid_transliteration(e)][0]
     return {'yiddish': yi_word, 'transliteration': transliteration}
