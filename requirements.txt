@@ -3,3 +3,4 @@ pandas
 cssselect
 requests
 pylev3
+click
